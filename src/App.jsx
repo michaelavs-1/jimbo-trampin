@@ -194,8 +194,13 @@ function SplashScreen({ onChoose }) {
           >
             קח אותי ללוח
           </button>
-          <div className="splash-van-track">
-            <img src={vanSvg} alt="אוטובוס טרמפ" className="splash-van" />
+          <div className="splash-bus-scene">
+            <div className="splash-van-track">
+              <img src={vanSvg} alt="אוטובוס טרמפ" className="splash-van" />
+            </div>
+            <div className="splash-road">
+              <div className="splash-road-dashes" />
+            </div>
           </div>
         </div>
       </div>
@@ -383,18 +388,20 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
             </div>
           </div>
 
-          {/* Time */}
-          <div className="field">
-            <label className="field-label">🕐 שעת יציאה (בערך)</label>
-            <select
-              className="field-input"
-              value={departureTime}
-              onChange={(e) => setDepartureTime(e.target.value)}
-            >
-              <option value="">לא יודע/ת עדיין</option>
-              {DEPARTURE_TIMES.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
+          {/* Time — drivers only */}
+          {type === 'offering' && (
+            <div className="field">
+              <label className="field-label">🕐 שעת יציאה (בערך)</label>
+              <select
+                className="field-input"
+                value={departureTime}
+                onChange={(e) => setDepartureTime(e.target.value)}
+              >
+                <option value="">לא יודע/ת עדיין</option>
+                {DEPARTURE_TIMES.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+          )}
 
           {/* Seats / Passengers counter */}
           <div className="field">
