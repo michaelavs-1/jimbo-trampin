@@ -134,13 +134,16 @@ input, select { font-family: inherit; }
 .splash-btn:active { transform: scale(0.97); opacity: 0.9; }
 
 .splash-btn-offer {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #e91e8c, #c026d3);
   color: #fff;
+  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.4);
 }
 
 .splash-btn-seek {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: #fff;
+  background: transparent;
+  color: #e0c4ff;
+  border: 2px solid #9333ea;
+  box-shadow: 0 4px 20px rgba(147, 51, 234, 0.25);
 }
 
 .splash-browse {
