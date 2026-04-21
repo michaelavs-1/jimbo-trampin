@@ -147,7 +147,8 @@ input, select { font-family: inherit; }
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   padding: 8px 12px;
@@ -320,28 +321,40 @@ input, select { font-family: inherit; }
   gap: 14px;
 }
 
-/* ── Van Illustration ─────────────────────────────────────────────────────── */
+/* ── Bus Illustration ─────────────────────────────────────────────────────── */
 
-@keyframes vanRide {
+@keyframes busScroll {
+  0%   { transform: translateX(110%); }
+  100% { transform: translateX(-110%); }
+}
+
+@keyframes busWobble {
   0%   { transform: translateX(0) rotate(0deg); }
-  25%  { transform: translateX(4px) rotate(0.5deg); }
+  25%  { transform: translateX(3px) rotate(0.4deg); }
   50%  { transform: translateX(0) rotate(0deg); }
-  75%  { transform: translateX(-4px) rotate(-0.5deg); }
+  75%  { transform: translateX(-3px) rotate(-0.4deg); }
   100% { transform: translateX(0) rotate(0deg); }
 }
 
-.splash-van {
+/* Track clips the bus as it enters/exits screen edges */
+.splash-van-track {
   width: 100%;
-  max-width: 360px;
-  margin-top: 8px;
-  animation: vanRide 2.5s ease-in-out infinite;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.splash-van {
+  width: 72%;
+  max-width: 340px;
+  display: block;
+  animation: busScroll 5s linear infinite;
 }
 
 .empty-van {
   width: 100%;
-  max-width: 280px;
+  max-width: 260px;
   margin-bottom: 8px;
-  animation: vanRide 3s ease-in-out infinite;
+  animation: busWobble 3s ease-in-out infinite;
   opacity: 0.85;
 }
 
@@ -744,6 +757,13 @@ input, select { font-family: inherit; }
 .city-option-selected { background: rgba(233,30,140,0.18) !important; color: var(--accent) !important; font-weight: 700; }
 
 .city-check { color: var(--accent); font-size: 14px; flex-shrink: 0; }
+
+.city-option-manual {
+  border-top: 1px solid var(--border);
+  color: var(--accent);
+  font-style: italic;
+  margin-top: 2px;
+}
 
 .city-none {
   padding: 14px 16px;

@@ -192,9 +192,11 @@ function SplashScreen({ onChoose }) {
             className="splash-browse"
             onClick={() => onChoose(null)}
           >
-            סתם רוצה לראות את הלוח
+            קח אותי ללוח
           </button>
-          <img src={vanSvg} alt="ואן טרמפ" className="splash-van" />
+          <div className="splash-van-track">
+            <img src={vanSvg} alt="אוטובוס טרמפ" className="splash-van" />
+          </div>
         </div>
       </div>
     </div>
@@ -217,9 +219,13 @@ function CityPicker({ value, onChange, hasError }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef();
 
-  const filtered = query.trim()
-    ? SORTED_CITIES.filter((c) => c.name.includes(query.trim()))
+  const trimmed = query.trim();
+  const filtered = trimmed
+    ? SORTED_CITIES.filter((c) => c.name.includes(trimmed))
     : SORTED_CITIES;
+
+  // Show manual option when user typed something not exactly in the list
+  const showManual = trimmed.length > 0 && !SORTED_CITIES.some((c) => c.name === trimmed);
 
   const select = (name) => {
     onChange(name);
@@ -249,7 +255,7 @@ function CityPicker({ value, onChange, hasError }) {
         <input
           className="city-input"
           type="text"
-          placeholder={value || 'חפש/י עיר...'}
+          placeholder={value || 'חפש/י עיר או יישוב...'}
           value={open ? query : (value || '')}
           onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
@@ -266,20 +272,28 @@ function CityPicker({ value, onChange, hasError }) {
       </div>
       {open && (
         <div className="city-dropdown">
-          {filtered.length === 0 ? (
+          {filtered.map((c) => (
+            <button
+              key={c.name}
+              type="button"
+              className={`city-option ${value === c.name ? 'city-option-selected' : ''}`}
+              onClick={() => select(c.name)}
+            >
+              {value === c.name && <span className="city-check">✓</span>}
+              {c.name}
+            </button>
+          ))}
+          {showManual && (
+            <button
+              type="button"
+              className="city-option city-option-manual"
+              onClick={() => select(trimmed)}
+            >
+              ✏️ הוסף ידנית: <strong>{trimmed}</strong>
+            </button>
+          )}
+          {filtered.length === 0 && !showManual && (
             <div className="city-none">לא נמצאה עיר</div>
-          ) : (
-            filtered.map((c) => (
-              <button
-                key={c.name}
-                type="button"
-                className={`city-option ${value === c.name ? 'city-option-selected' : ''}`}
-                onClick={() => select(c.name)}
-              >
-                {value === c.name && <span className="city-check">✓</span>}
-                {c.name}
-              </button>
-            ))
           )}
         </div>
       )}
