@@ -394,6 +394,36 @@ function SplashScreen({ onChoose }) {
   );
 }
 
+// ─── Type Picker Sheet ────────────────────────────────────────────────────────
+
+function TypePickerSheet({ onPick, onClose }) {
+  const overlayRef = useRef();
+  return (
+    <div
+      className="sheet-overlay"
+      ref={overlayRef}
+      onClick={(e) => e.target === overlayRef.current && onClose()}
+    >
+      <div className="sheet">
+        <div className="sheet-handle" />
+        <p className="sheet-title">מה תרצה/י לפרסם?</p>
+        <div className="sheet-btns">
+          <button className="sheet-btn sheet-btn-offer" onClick={() => onPick('offering')}>
+            <span className="sheet-btn-icon">🚗</span>
+            <span className="sheet-btn-label">יש לי מקום באוטו</span>
+            <span className="sheet-btn-sub">אני נוסע/ת ויש לי מקום</span>
+          </button>
+          <button className="sheet-btn sheet-btn-seek" onClick={() => onPick('seeking')}>
+            <span className="sheet-btn-icon">✋</span>
+            <span className="sheet-btn-label">מחפש/ת טרמפ</span>
+            <span className="sheet-btn-sub">אני צריך/ה הסעה</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Post Form ────────────────────────────────────────────────────────────────
 
 const DEPARTURE_TIMES = [
@@ -936,7 +966,7 @@ export default function App() {
   const [filter, setFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [modalInitialType, setModalInitialType] = useState('offering');
-  const [showSplash, setShowSplash] = useState(true);
+  const [showTypePicker, setShowTypePicker] = useState(false);
   const [showMyAds, setShowMyAds] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -945,12 +975,10 @@ export default function App() {
   const [dbError, setDbError] = useState(false);
   const prevIdsRef = useRef(null);
 
-  const handleSplashChoose = (type) => {
-    setShowSplash(false);
-    if (type !== null) {
-      setModalInitialType(type);
-      setShowModal(true);
-    }
+  const handleTypePick = (type) => {
+    setShowTypePicker(false);
+    setModalInitialType(type);
+    setShowModal(true);
   };
 
   useEffect(() => {
@@ -1050,9 +1078,6 @@ export default function App() {
   return (
     <div className="app" dir="rtl" lang="he">
 
-      {/* Splash Screen */}
-      {showSplash && <SplashScreen onChoose={handleSplashChoose} />}
-
       {/* Header */}
       <header className="header">
         <div className="header-img-wrap">
@@ -1110,7 +1135,7 @@ export default function App() {
       </main>
 
       {/* FAB */}
-      <button className="fab" onClick={() => { setModalInitialType('offering'); setShowModal(true); }} aria-label="פרסם מודעה">
+      <button className="fab" onClick={() => setShowTypePicker(true)} aria-label="פרסם מודעה">
         <span className="fab-plus">+</span> פרסם מודעה
       </button>
 
@@ -1131,6 +1156,10 @@ export default function App() {
           onUpdate={handleUpdate}
           updateLoading={updateLoading}
         />
+      )}
+
+      {showTypePicker && (
+        <TypePickerSheet onPick={handleTypePick} onClose={() => setShowTypePicker(false)} />
       )}
 
       {newPostPin && (
