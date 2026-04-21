@@ -328,6 +328,22 @@ input, select { font-family: inherit; }
   100% { transform: translateX(-110%); }
 }
 
+/* Wheel spin — reliable via CSS (not SVG animateTransform) */
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.wheel-rear {
+  transform-origin: 118px 177px;
+  animation: wheelSpin 0.9s linear infinite;
+}
+
+.wheel-front {
+  transform-origin: 348px 177px;
+  animation: wheelSpin 0.9s linear infinite;
+}
+
 @keyframes busWobble {
   0%   { transform: translateX(0) rotate(0deg); }
   25%  { transform: translateX(3px) rotate(0.4deg); }

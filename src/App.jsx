@@ -6,8 +6,176 @@ import { db } from './firebase';
 import { CITIES } from './cities';
 import { findMatches, MATCH_LABELS } from './matching';
 import concertImg from './assets/jimbo-concert.png';
-import vanSvg from './assets/van.svg';
 import './App.css';
+
+// ─── Bus SVG (inline so CSS wheel animation works reliably) ───────────────────
+
+function BusSvg({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 210" fill="none" className={className}>
+      <defs>
+        <linearGradient id="busBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#8b21c8"/>
+          <stop offset="45%"  stopColor="#6d14a8"/>
+          <stop offset="100%" stopColor="#3d0870"/>
+        </linearGradient>
+        <linearGradient id="topStripe" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor="#e91e8c"/>
+          <stop offset="50%"  stopColor="#ff6bc1"/>
+          <stop offset="100%" stopColor="#e91e8c"/>
+        </linearGradient>
+        <linearGradient id="glass" x1="0" y1="0" x2="0.15" y2="1">
+          <stop offset="0%"   stopColor="#c084fc" stopOpacity="0.9"/>
+          <stop offset="100%" stopColor="#7e22ce" stopOpacity="0.65"/>
+        </linearGradient>
+        <linearGradient id="windshield" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%"   stopColor="#e0c4ff" stopOpacity="0.95"/>
+          <stop offset="100%" stopColor="#9333ea" stopOpacity="0.7"/>
+        </linearGradient>
+        <radialGradient id="tire" cx="42%" cy="35%" r="58%">
+          <stop offset="0%"   stopColor="#374151"/>
+          <stop offset="100%" stopColor="#060b14"/>
+        </radialGradient>
+        <radialGradient id="rim" cx="38%" cy="32%" r="55%">
+          <stop offset="0%"   stopColor="#f3f4f6"/>
+          <stop offset="70%"  stopColor="#9ca3af"/>
+          <stop offset="100%" stopColor="#6b7280"/>
+        </radialGradient>
+        <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor="#fef9c3" stopOpacity="0.9"/>
+          <stop offset="100%" stopColor="#fef9c3" stopOpacity="0"/>
+        </linearGradient>
+        <radialGradient id="shadow" cx="50%" cy="15%" r="50%">
+          <stop offset="0%"   stopColor="#000" stopOpacity="0.4"/>
+          <stop offset="100%" stopColor="#000" stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stopColor="#fff" stopOpacity="0.22"/>
+          <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+
+      {/* Headlight beam */}
+      <polygon points="400,118 480,90 480,155 400,148" fill="url(#beam)" opacity="0.35"/>
+
+      {/* Ground shadow */}
+      <ellipse cx="240" cy="178" rx="190" ry="7" fill="url(#shadow)"/>
+
+      {/* Bus body */}
+      <rect x="42" y="72" width="380" height="108" rx="10" fill="url(#busBody)" stroke="#9333ea" strokeWidth="2.2"/>
+      <rect x="42" y="72" width="380" height="18" rx="10" fill="url(#topStripe)"/>
+      <rect x="42" y="82" width="380" height="8" fill="url(#topStripe)"/>
+      <rect x="44" y="92" width="376" height="28" rx="4" fill="url(#gloss)"/>
+      <rect x="42" y="158" width="380" height="22" fill="#2e0658" opacity="0.55"/>
+      <rect x="42" y="169" width="380" height="11" fill="#1a0030" opacity="0.6"/>
+
+      {/* Destination sign */}
+      <rect x="310" y="75" width="100" height="20" rx="4" fill="#0a0018" stroke="#e91e8c" strokeWidth="1.2"/>
+      <text x="360" y="89" fontFamily="Arial, sans-serif" fontSize="9.5" fontWeight="bold"
+            fill="#e91e8c" textAnchor="middle" letterSpacing="1">קיסריה 13.5 🎵</text>
+
+      {/* Front face */}
+      <rect x="400" y="80" width="22" height="98" rx="8" fill="#5b10a0" stroke="#9333ea" strokeWidth="1.8"/>
+      <rect x="394" y="85" width="28" height="62" rx="6" fill="url(#windshield)" stroke="#c084fc" strokeWidth="1.5"/>
+      <rect x="397" y="88" width="14" height="18" rx="3" fill="white" opacity="0.18"/>
+      <rect x="396" y="152" width="30" height="12" rx="5" fill="#4c0d8f" stroke="#9333ea" strokeWidth="1.5"/>
+      <rect x="399" y="156" width="24" height="4" rx="2" fill="#a78bfa" opacity="0.5"/>
+
+      {/* Rear face */}
+      <rect x="42" y="80" width="16" height="98" rx="6" fill="#5b10a0" stroke="#9333ea" strokeWidth="1.5"/>
+      <rect x="38" y="152" width="24" height="12" rx="5" fill="#4c0d8f" stroke="#9333ea" strokeWidth="1.5"/>
+
+      {/* Windows */}
+      <rect x="55" y="95" width="332" height="52" rx="4" fill="#200040" opacity="0.5"/>
+      {[60, 124, 188, 252].map((x) => (
+        <g key={x}>
+          <rect x={x} y="98" width="54" height="46" rx="5" fill="url(#glass)" stroke="#c084fc" strokeWidth="1.3"/>
+          <rect x={x+2} y="100" width="27" height="14" rx="3" fill="white" opacity="0.13"/>
+        </g>
+      ))}
+      <rect x="316" y="98" width="66" height="46" rx="5" fill="url(#glass)" stroke="#c084fc" strokeWidth="1.3"/>
+      <rect x="318" y="100" width="33" height="14" rx="3" fill="white" opacity="0.13"/>
+
+      {/* Driver */}
+      <circle cx="356" cy="108" r="9" fill="#12001f" opacity="0.85"/>
+      <path d="M 347 118 Q 347 114 356 114 Q 365 114 365 118 L 366 135 L 346 135 Z" fill="#12001f" opacity="0.75"/>
+
+      {/* Door */}
+      <line x1="116" y1="95" x2="116" y2="180" stroke="#9333ea" strokeWidth="1.8" opacity="0.7"/>
+      <rect x="92" y="135" width="18" height="5" rx="2.5" fill="#c084fc" stroke="#e0c4ff" strokeWidth="0.8"/>
+
+      {/* Headlights */}
+      <rect x="410" y="108" width="22" height="16" rx="5" fill="#fef08a" stroke="#fbbf24" strokeWidth="1.5"/>
+      <rect x="413" y="111" width="14" height="9" rx="3" fill="#fde047"/>
+      <rect x="415" y="112" width="5" height="3" rx="1" fill="white" opacity="0.75"/>
+      <rect x="410" y="126" width="22" height="5" rx="2" fill="#fcd34d" opacity="0.9"/>
+
+      {/* Tail lights */}
+      <rect x="44" y="105" width="14" height="26" rx="5" fill="#dc2626" stroke="#f87171" strokeWidth="1.2"/>
+      <rect x="46" y="107" width="6" height="10" rx="2" fill="#fca5a5" opacity="0.7"/>
+      <rect x="44" y="133" width="14" height="8" rx="3" fill="white" opacity="0.55"/>
+
+      {/* Rear wheel — static outer, rotating inner via CSS */}
+      <circle cx="118" cy="177" r="32" fill="url(#tire)" stroke="#374151" strokeWidth="2.2"/>
+      <g className="wheel-rear">
+        <circle cx="118" cy="177" r="30" fill="none" stroke="#4b5563" strokeWidth="4.5" strokeDasharray="9 5"/>
+        <circle cx="118" cy="177" r="22" fill="url(#rim)"/>
+        <circle cx="118" cy="177" r="20" fill="#1c2333" stroke="#6b7280" strokeWidth="1"/>
+        <line x1="118" y1="158" x2="118" y2="173" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="118" y1="181" x2="118" y2="196" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="99"  y1="177" x2="114" y2="177" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="122" y1="177" x2="137" y2="177" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="105" y1="163" x2="114" y2="172" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="122" y1="182" x2="131" y2="191" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="131" y1="163" x2="122" y2="172" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="114" y1="182" x2="105" y2="191" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <circle cx="118" cy="177" r="7" fill="#d1d5db" stroke="#9ca3af" strokeWidth="1.2"/>
+        <circle cx="118" cy="177" r="3" fill="#6b7280"/>
+      </g>
+
+      {/* Front wheel — static outer, rotating inner via CSS */}
+      <circle cx="348" cy="177" r="32" fill="url(#tire)" stroke="#374151" strokeWidth="2.2"/>
+      <g className="wheel-front">
+        <circle cx="348" cy="177" r="30" fill="none" stroke="#4b5563" strokeWidth="4.5" strokeDasharray="9 5"/>
+        <circle cx="348" cy="177" r="22" fill="url(#rim)"/>
+        <circle cx="348" cy="177" r="20" fill="#1c2333" stroke="#6b7280" strokeWidth="1"/>
+        <line x1="348" y1="158" x2="348" y2="173" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="348" y1="181" x2="348" y2="196" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="329" y1="177" x2="344" y2="177" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="352" y1="177" x2="367" y2="177" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="335" y1="163" x2="344" y2="172" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="352" y1="182" x2="361" y2="191" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="361" y1="163" x2="352" y2="172" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="344" y1="182" x2="335" y2="191" stroke="#9ca3af" strokeWidth="3" strokeLinecap="round"/>
+        <circle cx="348" cy="177" r="7" fill="#d1d5db" stroke="#9ca3af" strokeWidth="1.2"/>
+        <circle cx="348" cy="177" r="3" fill="#6b7280"/>
+      </g>
+
+      {/* Speed lines */}
+      <line x1="2"  y1="98"  x2="38" y2="98"  stroke="#e91e8c" strokeWidth="3.5" strokeLinecap="round" opacity="0.65"/>
+      <line x1="0"  y1="112" x2="38" y2="112" stroke="#c026d3" strokeWidth="2.5" strokeLinecap="round" opacity="0.5"/>
+      <line x1="6"  y1="126" x2="38" y2="126" stroke="#e91e8c" strokeWidth="2"   strokeLinecap="round" opacity="0.4"/>
+      <line x1="10" y1="140" x2="38" y2="140" stroke="#9333ea" strokeWidth="1.5" strokeLinecap="round" opacity="0.3"/>
+      <line x1="4"  y1="154" x2="38" y2="154" stroke="#e91e8c" strokeWidth="1.2" strokeLinecap="round" opacity="0.22"/>
+
+      {/* Dust */}
+      <circle cx="18" cy="170" r="4" fill="#9333ea" opacity="0.3"/>
+      <circle cx="8"  cy="163" r="3" fill="#e91e8c" opacity="0.25"/>
+      <circle cx="28" cy="167" r="2.5" fill="#c026d3" opacity="0.2"/>
+
+      {/* Music notes */}
+      <text x="444" y="52" fontSize="26" fill="#e91e8c" opacity="0.9"  transform="rotate(-10 444 52)">♪</text>
+      <text x="424" y="30" fontSize="18" fill="#c084fc" opacity="0.75" transform="rotate(6 424 30)">♫</text>
+      <text x="462" y="74" fontSize="14" fill="#e91e8c" opacity="0.6"  transform="rotate(-4 462 74)">♩</text>
+      <text x="410" y="14" fontSize="12" fill="#f0abfc" opacity="0.5"  transform="rotate(12 410 14)">♬</text>
+
+      {/* Stars */}
+      <circle cx="20" cy="32" r="2.5" fill="#e91e8c" opacity="0.6"/>
+      <circle cx="10" cy="52" r="1.8" fill="#c084fc" opacity="0.5"/>
+      <circle cx="30" cy="20" r="2"   fill="#f0abfc" opacity="0.45"/>
+    </svg>
+  );
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -196,7 +364,7 @@ function SplashScreen({ onChoose }) {
           </button>
           <div className="splash-bus-scene">
             <div className="splash-van-track">
-              <img src={vanSvg} alt="אוטובוס טרמפ" className="splash-van" />
+              <BusSvg className="splash-van" />
             </div>
             <div className="splash-road">
               <div className="splash-road-dashes" />
@@ -632,7 +800,7 @@ export default function App() {
       <main className="board">
         {filtered.length === 0 ? (
           <div className="empty">
-            <img src={vanSvg} alt="ואן טרמפ" className="empty-van" />
+            <BusSvg className="empty-van" />
             <p className="empty-title">אין פוסטים עדיין</p>
             <p className="empty-sub">היה/י הראשון/ה לפרסם!</p>
           </div>
