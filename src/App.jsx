@@ -560,19 +560,21 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering', editP
           <button className="modal-x" onClick={onClose}>×</button>
         </div>
 
-        {/* Type toggle */}
-        <div className="type-toggle">
-          <button
-            type="button"
-            className={`toggle-btn ${type === 'offering' ? 'toggle-offer-active' : ''}`}
-            onClick={() => setType('offering')}
-          >🚗 יש לי מקום</button>
-          <button
-            type="button"
-            className={`toggle-btn ${type === 'seeking' ? 'toggle-seek-active' : ''}`}
-            onClick={() => setType('seeking')}
-          >✋ מחפש טרמפ</button>
-        </div>
+        {/* Type toggle — only in edit mode; new posts use TypePickerSheet */}
+        {isEdit && (
+          <div className="type-toggle">
+            <button
+              type="button"
+              className={`toggle-btn ${type === 'offering' ? 'toggle-offer-active' : ''}`}
+              onClick={() => setType('offering')}
+            >🚗 יש לי מקום</button>
+            <button
+              type="button"
+              className={`toggle-btn ${type === 'seeking' ? 'toggle-seek-active' : ''}`}
+              onClick={() => setType('seeking')}
+            >✋ מחפש טרמפ</button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="form" noValidate>
 
@@ -1039,7 +1041,7 @@ export default function App() {
         createdAt: serverTimestamp(),
       });
       setShowModal(false);
-      if (isNewPin) setNewPostPin(pin);
+      setNewPostPin(pin); // always show PIN after posting
     } catch (err) {
       console.error(err);
       alert('שגיאה בשמירה — בדוק חיבור ונסה שוב.');
