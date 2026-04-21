@@ -1,12 +1,26 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  collection, addDoc, onSnapshot, serverTimestamp, query, orderBy,
+  collection, addDoc, updateDoc, deleteDoc, doc,
+  onSnapshot, serverTimestamp, query, orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { CITIES } from './cities';
 import { findMatches, MATCH_LABELS } from './matching';
 import concertImg from './assets/jimbo-concert.png';
 import './App.css';
+
+// ─── User identity (localStorage UUID, no login required) ────────────────────
+
+const getUserId = () => {
+  let uid = localStorage.getItem('jimbo_uid');
+  if (!uid) {
+    uid = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('jimbo_uid', uid);
+  }
+  return uid;
+};
 
 // ─── Bus SVG (inline so CSS wheel animation works reliably) ───────────────────
 
@@ -474,17 +488,18 @@ function CityPicker({ value, onChange, hasError }) {
   );
 }
 
-function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
-  const [type, setType] = useState(initialType);
-  const [from, setFrom] = useState('');
-  const [direction, setDirection] = useState('going');
-  const [departureTime, setDepartureTime] = useState('');
-  const [seats, setSeats] = useState(2);
-  const [passengers, setPassengers] = useState(1);
-  const [costType, setCostType] = useState('');
-  const [contactType, setContactType] = useState('whatsapp');
-  const [contact, setContact] = useState('');
-  const [name, setName] = useState('');
+function PostModal({ onClose, onSubmit, loading, initialType = 'offering', editPost = null }) {
+  const isEdit = !!editPost;
+  const [type, setType] = useState(editPost?.type ?? initialType);
+  const [from, setFrom] = useState(editPost?.from ?? '');
+  const [direction, setDirection] = useState(editPost?.direction ?? 'going');
+  const [departureTime, setDepartureTime] = useState(editPost?.departureTime ?? '');
+  const [seats, setSeats] = useState(editPost?.seats ?? 2);
+  const [passengers, setPassengers] = useState(editPost?.passengers ?? 1);
+  const [costType, setCostType] = useState(editPost?.costType ?? '');
+  const [contactType, setContactType] = useState(editPost?.contactType ?? 'whatsapp');
+  const [contact, setContact] = useState(editPost?.contact ?? '');
+  const [name, setName] = useState(editPost?.name ?? '');
   const [errors, setErrors] = useState({});
   const overlayRef = useRef();
 
@@ -507,7 +522,7 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
     <div className="modal-overlay" ref={overlayRef} onClick={(e) => e.target === overlayRef.current && onClose()}>
       <div className="modal">
         <div className="modal-header">
-          <h2 className="modal-title">🎵 פרסם טרמפ</h2>
+          <h2 className="modal-title">{isEdit ? '✏️ ערוך מודעה' : '🎵 פרסם מודעה'}</h2>
           <button className="modal-x" onClick={onClose}>×</button>
         </div>
 
@@ -660,9 +675,117 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
           </div>
 
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? '⏳ שולח...' : '🎵 פרסם!'}
+            {loading ? '⏳ שומר...' : isEdit ? '✅ שמור שינויים' : '🎵 פרסם מודעה'}
           </button>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── My Ads Modal ─────────────────────────────────────────────────────────────
+
+function MyAdCard({ post, onEdit, onDelete }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const isOffering = post.type === 'offering';
+
+  const dirLabel = { going: '→ הלוך', return: '← חזרה', both: '↔ הלוך ושוב' }[post.direction] || '';
+
+  return (
+    <div className={`my-ad-card ${isOffering ? 'my-ad-offer' : 'my-ad-seek'}`}>
+      <div className="my-ad-top">
+        <span className={`type-badge ${isOffering ? 'badge-offer' : 'badge-seek'}`}>
+          {isOffering ? '🚗 מסיע' : '✋ מחפש טרמפ'}
+        </span>
+        <span className="my-ad-dir">{dirLabel}</span>
+      </div>
+
+      <div className="my-ad-from">
+        <span className="city-pin">📍</span>
+        <strong>{post.from}</strong>
+      </div>
+
+      <div className="chips-row" style={{ marginBottom: 0 }}>
+        {post.departureTime && <span className="chip">🕐 {post.departureTime}</span>}
+        {isOffering
+          ? <span className="chip">💺 {post.seats} מקומות</span>
+          : <span className="chip">👥 {post.passengers} {post.passengers === 1 ? 'איש' : 'אנשים'}</span>}
+        {isOffering && post.costType && (
+          <span className={`chip ${post.costType === 'free' ? 'chip-free' : 'chip-fuel'}`}>
+            {post.costType === 'free' ? '🎁 חינם' : '⛽ דלק'}
+          </span>
+        )}
+      </div>
+
+      <div className="my-ad-actions">
+        {confirmDelete ? (
+          <div className="my-ad-confirm">
+            <span>בטוח למחוק?</span>
+            <button className="my-ad-btn my-ad-btn-danger" onClick={onDelete}>כן, מחק</button>
+            <button className="my-ad-btn my-ad-btn-ghost" onClick={() => setConfirmDelete(false)}>ביטול</button>
+          </div>
+        ) : (
+          <>
+            <button className="my-ad-btn my-ad-btn-edit" onClick={onEdit}>✏️ ערוך</button>
+            <button className="my-ad-btn my-ad-btn-danger" onClick={() => setConfirmDelete(true)}>🗑️ מחק</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MyAdsModal({ posts, onClose, onDelete, onUpdate, updateLoading }) {
+  const [editingPost, setEditingPost] = useState(null);
+  const overlayRef = useRef();
+  const uid = getUserId();
+  const myPosts = posts.filter((p) => p.userId === uid);
+
+  if (editingPost) {
+    return (
+      <PostModal
+        editPost={editingPost}
+        onClose={() => setEditingPost(null)}
+        onSubmit={async (form) => {
+          await onUpdate(editingPost.id, form);
+          setEditingPost(null);
+        }}
+        loading={updateLoading}
+        initialType={editingPost.type}
+      />
+    );
+  }
+
+  return (
+    <div
+      className="modal-overlay"
+      ref={overlayRef}
+      onClick={(e) => e.target === overlayRef.current && onClose()}
+    >
+      <div className="modal">
+        <div className="modal-header">
+          <h2 className="modal-title">👤 המודעות שלי</h2>
+          <button className="modal-x" onClick={onClose}>×</button>
+        </div>
+
+        {myPosts.length === 0 ? (
+          <div className="my-ads-empty">
+            <p className="my-ads-empty-icon">📭</p>
+            <p className="my-ads-empty-title">אין לך מודעות עדיין</p>
+            <p className="my-ads-empty-sub">פרסם טרמפ ותוכל לנהל אותו כאן</p>
+          </div>
+        ) : (
+          <div className="my-ads-list">
+            {myPosts.map((post) => (
+              <MyAdCard
+                key={post.id}
+                post={post}
+                onEdit={() => setEditingPost(post)}
+                onDelete={() => onDelete(post.id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -676,7 +799,9 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [modalInitialType, setModalInitialType] = useState('offering');
   const [showSplash, setShowSplash] = useState(true);
+  const [showMyAds, setShowMyAds] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [dbError, setDbError] = useState(false);
   const prevIdsRef = useRef(null);
@@ -737,6 +862,7 @@ export default function App() {
     try {
       await addDoc(collection(db, 'rides'), {
         ...form,
+        userId: getUserId(),
         createdAt: serverTimestamp(),
       });
       setShowModal(false);
@@ -745,6 +871,27 @@ export default function App() {
       alert('שגיאה בשמירה — בדוק חיבור ונסה שוב.');
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  const handleUpdate = useCallback(async (id, form) => {
+    setUpdateLoading(true);
+    try {
+      await updateDoc(doc(db, 'rides', id), { ...form });
+    } catch (err) {
+      console.error(err);
+      alert('שגיאה בעדכון — נסה שוב.');
+    } finally {
+      setUpdateLoading(false);
+    }
+  }, []);
+
+  const handleDelete = useCallback(async (id) => {
+    try {
+      await deleteDoc(doc(db, 'rides', id));
+    } catch (err) {
+      console.error(err);
+      alert('שגיאה במחיקה — נסה שוב.');
     }
   }, []);
 
@@ -766,6 +913,9 @@ export default function App() {
           <img src={concertImg} alt="ג׳ימבו ג׳יי קיסריה 13.5" className="header-concert-img" />
           <div className="header-img-overlay">
             <div className="header-badge">🚗 לוח טרמפים</div>
+            <button className="my-ads-btn" onClick={() => setShowMyAds(true)} aria-label="המודעות שלי">
+              👤
+            </button>
           </div>
         </div>
       </header>
@@ -814,8 +964,8 @@ export default function App() {
       </main>
 
       {/* FAB */}
-      <button className="fab" onClick={() => { setModalInitialType('offering'); setShowModal(true); }} aria-label="פרסם טרמפ">
-        <span className="fab-plus">+</span> פרסם טרמפ
+      <button className="fab" onClick={() => { setModalInitialType('offering'); setShowModal(true); }} aria-label="פרסם מודעה">
+        <span className="fab-plus">+</span> פרסם מודעה
       </button>
 
       {showModal && (
@@ -824,6 +974,16 @@ export default function App() {
           onSubmit={handleSubmit}
           loading={loading}
           initialType={modalInitialType}
+        />
+      )}
+
+      {showMyAds && (
+        <MyAdsModal
+          posts={posts}
+          onClose={() => setShowMyAds(false)}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+          updateLoading={updateLoading}
         />
       )}
     </div>

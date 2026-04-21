@@ -190,8 +190,26 @@ input, select { font-family: inherit; }
   background: linear-gradient(to bottom, rgba(11,0,21,0.25) 0%, rgba(11,0,21,0.65) 100%);
   display: flex;
   align-items: flex-end;
+  justify-content: space-between;
   padding: 10px 14px;
 }
+
+/* My Ads icon button in header */
+.my-ads-btn {
+  background: rgba(11, 0, 21, 0.55);
+  border: 1px solid rgba(233, 30, 140, 0.4);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.my-ads-btn:hover { background: rgba(233, 30, 140, 0.25); border-color: var(--accent); }
 
 .header-badge {
   display: inline-flex;
@@ -901,3 +919,91 @@ input, select { font-family: inherit; }
 /* ── Google Font ──────────────────────────────────────────────────────────── */
 
 
+
+/* ── My Ads Modal ─────────────────────────────────────────────────────────── */
+
+.my-ads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0 8px;
+}
+
+.my-ad-card {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-ad-offer { background: var(--card-offer); border-color: rgba(233,30,140,0.25); }
+.my-ad-seek  { background: var(--card-seek);  border-color: rgba(59,130,246,0.2); }
+
+.my-ad-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.my-ad-dir {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+.my-ad-from {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.my-ad-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.my-ad-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: #fca5a5;
+  font-weight: 600;
+}
+
+.my-ad-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.12s, transform 0.1s;
+}
+.my-ad-btn:active { opacity: 0.8; transform: scale(0.97); }
+
+.my-ad-btn-edit  { background: rgba(147,51,234,0.25); color: #c084fc; border: 1px solid rgba(147,51,234,0.4); }
+.my-ad-btn-danger { background: rgba(220,38,38,0.18); color: #fca5a5;  border: 1px solid rgba(220,38,38,0.35); }
+.my-ad-btn-ghost  { background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+
+.my-ads-empty {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.my-ads-empty-icon  { font-size: 48px; }
+.my-ads-empty-title { font-size: 17px; font-weight: 700; color: #fff; }
+.my-ads-empty-sub   { font-size: 14px; color: var(--text-muted); }
