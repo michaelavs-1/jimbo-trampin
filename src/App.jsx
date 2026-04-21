@@ -9,17 +9,20 @@ import { findMatches, MATCH_LABELS } from './matching';
 import concertImg from './assets/jimbo-concert.png';
 import './App.css';
 
-// ─── User identity (localStorage UUID, no login required) ────────────────────
+// ─── 4-digit PIN identity ─────────────────────────────────────────────────────
 
-const getUserId = () => {
-  let uid = localStorage.getItem('jimbo_uid');
-  if (!uid) {
-    uid = typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem('jimbo_uid', uid);
-  }
-  return uid;
+const getSavedPin = () => localStorage.getItem('jimbo_pin') || '';
+const savePin     = (pin) => localStorage.setItem('jimbo_pin', pin);
+
+// Generate a unique 4-digit PIN not already in use by existing posts
+const generateUniquePin = (posts) => {
+  const used = new Set(posts.map((p) => p.userPin).filter(Boolean));
+  let pin, attempts = 0;
+  do {
+    pin = String(Math.floor(1000 + Math.random() * 9000));
+    attempts++;
+  } while (used.has(pin) && attempts < 100);
+  return pin;
 };
 
 // ─── Bus SVG (inline so CSS wheel animation works reliably) ───────────────────
@@ -683,6 +686,55 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering', editP
   );
 }
 
+// ─── Pin Success Modal ─────────────────────────────────────────────────────────
+
+function PinSuccessModal({ pin, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const digits = pin.split('');
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(pin).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
+
+  return (
+    <div className="modal-overlay pin-overlay">
+      <div className="modal pin-success-modal">
+        <div className="pin-success-top">
+          <span className="pin-success-icon">✅</span>
+          <h2 className="pin-success-title">המודעה פורסמה!</h2>
+        </div>
+
+        <p className="pin-success-sub">זה הקוד האישי שלך:</p>
+
+        <div className="pin-digits-row">
+          {digits.map((d, i) => (
+            <div key={i} className="pin-digit">{d}</div>
+          ))}
+        </div>
+
+        <button className="pin-copy-btn" onClick={handleCopy}>
+          {copied ? '✓ הועתק!' : '📋 העתק קוד'}
+        </button>
+
+        <div className="pin-warning-box">
+          <p className="pin-warning-text">
+            🔐 שמור/י את הקוד הזה!<br />
+            הוא הדרך היחידה לערוך או למחוק את המודעה שלך מכל מכשיר.
+            הקוד גלוי רק לך.
+          </p>
+        </div>
+
+        <button className="submit-btn" onClick={onClose}>
+          שמרתי את הקוד — המשך ✓
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── My Ads Modal ─────────────────────────────────────────────────────────────
 
 function MyAdCard({ post, onEdit, onDelete }) {
@@ -737,9 +789,26 @@ function MyAdCard({ post, onEdit, onDelete }) {
 
 function MyAdsModal({ posts, onClose, onDelete, onUpdate, updateLoading }) {
   const [editingPost, setEditingPost] = useState(null);
+  const [pinInput, setPinInput] = useState('');
+  const [activePin, setActivePin] = useState(getSavedPin()); // auto-fill if saved
+  const [pinError, setPinError] = useState('');
   const overlayRef = useRef();
-  const uid = getUserId();
-  const myPosts = posts.filter((p) => p.userId === uid);
+
+  const myPosts = posts.filter((p) => p.userPin === activePin);
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = pinInput.trim();
+    if (trimmed.length !== 4) return;
+    const found = posts.some((p) => p.userPin === trimmed);
+    if (found) {
+      savePin(trimmed);
+      setActivePin(trimmed);
+      setPinError('');
+    } else {
+      setPinError('לא נמצאו מודעות עם קוד זה');
+    }
+  };
 
   if (editingPost) {
     return (
@@ -768,11 +837,39 @@ function MyAdsModal({ posts, onClose, onDelete, onUpdate, updateLoading }) {
           <button className="modal-x" onClick={onClose}>×</button>
         </div>
 
-        {myPosts.length === 0 ? (
+        {!activePin ? (
+          /* ── PIN entry gate ── */
+          <form className="pin-entry-form" onSubmit={handlePinSubmit} noValidate>
+            <p className="pin-entry-desc">
+              הכנס/י את הקוד האישי שלך (4 ספרות)<br />
+              כדי לראות ולנהל את המודעות שלך
+            </p>
+            <input
+              className={`pin-input ${pinError ? 'field-error' : ''}`}
+              type="text"
+              inputMode="numeric"
+              placeholder="_ _ _ _"
+              maxLength={4}
+              value={pinInput}
+              onChange={(e) => {
+                setPinInput(e.target.value.replace(/\D/g, '').slice(0, 4));
+                setPinError('');
+              }}
+              autoFocus
+            />
+            {pinError && <span className="err">{pinError}</span>}
+            <button type="submit" className="submit-btn" disabled={pinInput.length !== 4}>
+              כניסה ←
+            </button>
+            <p className="pin-entry-hint">
+              עדיין אין לך קוד? פרסם מודעה ותקבל אחד אוטומטית.
+            </p>
+          </form>
+        ) : myPosts.length === 0 ? (
           <div className="my-ads-empty">
             <p className="my-ads-empty-icon">📭</p>
             <p className="my-ads-empty-title">אין לך מודעות עדיין</p>
-            <p className="my-ads-empty-sub">פרסם טרמפ ותוכל לנהל אותו כאן</p>
+            <p className="my-ads-empty-sub">פרסם מודעה ותוכל לנהל אותה כאן</p>
           </div>
         ) : (
           <div className="my-ads-list">
@@ -802,6 +899,7 @@ export default function App() {
   const [showMyAds, setShowMyAds] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [newPostPin, setNewPostPin] = useState(null); // PIN to reveal after first post
   const [notifications, setNotifications] = useState([]);
   const [dbError, setDbError] = useState(false);
   const prevIdsRef = useRef(null);
@@ -860,19 +958,26 @@ export default function App() {
   const handleSubmit = useCallback(async (form) => {
     setLoading(true);
     try {
+      let pin = getSavedPin();
+      const isNewPin = !pin;
+      if (isNewPin) {
+        pin = generateUniquePin(posts);
+        savePin(pin);
+      }
       await addDoc(collection(db, 'rides'), {
         ...form,
-        userId: getUserId(),
+        userPin: pin,
         createdAt: serverTimestamp(),
       });
       setShowModal(false);
+      if (isNewPin) setNewPostPin(pin);
     } catch (err) {
       console.error(err);
       alert('שגיאה בשמירה — בדוק חיבור ונסה שוב.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [posts]);
 
   const handleUpdate = useCallback(async (id, form) => {
     setUpdateLoading(true);
@@ -913,8 +1018,8 @@ export default function App() {
           <img src={concertImg} alt="ג׳ימבו ג׳יי קיסריה 13.5" className="header-concert-img" />
           <div className="header-img-overlay">
             <div className="header-badge">🚗 לוח טרמפים</div>
-            <button className="my-ads-btn" onClick={() => setShowMyAds(true)} aria-label="המודעות שלי">
-              👤
+            <button className="my-ads-btn" onClick={() => setShowMyAds(true)}>
+              👤 <span className="my-ads-btn-text">המודעות שלי</span>
             </button>
           </div>
         </div>
@@ -985,6 +1090,10 @@ export default function App() {
           onUpdate={handleUpdate}
           updateLoading={updateLoading}
         />
+      )}
+
+      {newPostPin && (
+        <PinSuccessModal pin={newPostPin} onClose={() => setNewPostPin(null)} />
       )}
     </div>
   );

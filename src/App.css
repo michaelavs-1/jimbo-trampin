@@ -196,20 +196,24 @@ input, select { font-family: inherit; }
 
 /* My Ads icon button in header */
 .my-ads-btn {
-  background: rgba(11, 0, 21, 0.55);
-  border: 1px solid rgba(233, 30, 140, 0.4);
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 18px;
+  background: rgba(11, 0, 21, 0.6);
+  border: 1px solid rgba(233, 30, 140, 0.45);
+  border-radius: 20px;
+  padding: 5px 12px 5px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #f0e6ff;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
   flex-shrink: 0;
+  white-space: nowrap;
 }
-.my-ads-btn:hover { background: rgba(233, 30, 140, 0.25); border-color: var(--accent); }
+.my-ads-btn:hover { background: rgba(233, 30, 140, 0.22); border-color: var(--accent); }
+.my-ads-btn-text { font-size: 13px; }
 
 .header-badge {
   display: inline-flex;
@@ -1007,3 +1011,130 @@ input, select { font-family: inherit; }
 .my-ads-empty-icon  { font-size: 48px; }
 .my-ads-empty-title { font-size: 17px; font-weight: 700; color: #fff; }
 .my-ads-empty-sub   { font-size: 14px; color: var(--text-muted); }
+
+/* ── PIN Success Modal ────────────────────────────────────────────────────── */
+
+.pin-overlay { z-index: 200; } /* above everything */
+
+.pin-success-modal {
+  text-align: center;
+}
+
+.pin-success-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pin-success-icon { font-size: 42px; }
+
+.pin-success-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.pin-success-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.pin-digits-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 12px;
+}
+
+.pin-digit {
+  width: 54px;
+  height: 62px;
+  background: #1a0030;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(233, 30, 140, 0.3);
+}
+
+.pin-copy-btn {
+  background: rgba(233, 30, 140, 0.12);
+  border: 1px solid rgba(233, 30, 140, 0.35);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 7px 18px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.15s;
+}
+.pin-copy-btn:hover { background: rgba(233, 30, 140, 0.22); }
+
+.pin-warning-box {
+  background: rgba(147, 51, 234, 0.12);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.pin-warning-text {
+  font-size: 14px;
+  color: #c084fc;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── PIN Entry Form (inside MyAdsModal) ───────────────────────────────────── */
+
+.pin-entry-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 4px;
+}
+
+.pin-entry-desc {
+  font-size: 15px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pin-input {
+  width: 140px;
+  height: 60px;
+  background: #1a0030;
+  border: 2px solid rgba(147, 51, 234, 0.5);
+  border-radius: 12px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 10px;
+  color: #fff;
+  text-align: center;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(233,30,140,0.18); }
+.pin-input.field-error { border-color: #dc2626; }
+.pin-input::placeholder { color: rgba(255,255,255,0.2); letter-spacing: 6px; }
+
+.pin-entry-hint {
+  font-size: 13px;
+  color: rgba(167, 139, 191, 0.6);
+  text-align: center;
+  margin: 0;
+}
