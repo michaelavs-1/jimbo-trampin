@@ -5,6 +5,8 @@ import {
 import { db } from './firebase';
 import { CITIES } from './cities';
 import { findMatches, MATCH_LABELS } from './matching';
+import concertImg from './assets/jimbo-concert.png';
+import vanSvg from './assets/van.svg';
 import './App.css';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -162,6 +164,43 @@ function RideCard({ post, allPosts }) {
   );
 }
 
+// ─── Splash Screen ────────────────────────────────────────────────────────────
+
+function SplashScreen({ onChoose }) {
+  return (
+    <div className="splash">
+      <div className="splash-inner">
+        <img src={concertImg} alt="ג׳ימבו ג׳יי קיסריה 13.5" className="splash-img" />
+        <div className="splash-content">
+          <h2 className="splash-title">🚗 לוח טרמפים</h2>
+          <p className="splash-sub">ג׳ימבו ג׳יי ולהקת ספא • קיסריה 13.5</p>
+          <div className="splash-btns">
+            <button
+              className="splash-btn splash-btn-offer"
+              onClick={() => onChoose('offering')}
+            >
+              🚗 יש לי מקום באוטו
+            </button>
+            <button
+              className="splash-btn splash-btn-seek"
+              onClick={() => onChoose('seeking')}
+            >
+              ✋ מחפש/ת טרמפ
+            </button>
+          </div>
+          <button
+            className="splash-browse"
+            onClick={() => onChoose(null)}
+          >
+            סתם רוצה לראות את הלוח
+          </button>
+          <img src={vanSvg} alt="ואן טרמפ" className="splash-van" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Post Form ────────────────────────────────────────────────────────────────
 
 const DEPARTURE_TIMES = [
@@ -171,8 +210,8 @@ const DEPARTURE_TIMES = [
 
 const SORTED_CITIES = [...CITIES].sort((a, b) => a.name.localeCompare(b.name, 'he'));
 
-function PostModal({ onClose, onSubmit, loading }) {
-  const [type, setType] = useState('offering');
+function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
+  const [type, setType] = useState(initialType);
   const [from, setFrom] = useState('');
   const [direction, setDirection] = useState('going');
   const [departureTime, setDepartureTime] = useState('');
@@ -374,10 +413,20 @@ export default function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
+  const [modalInitialType, setModalInitialType] = useState('offering');
+  const [showSplash, setShowSplash] = useState(true);
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [dbError, setDbError] = useState(false);
   const prevIdsRef = useRef(null);
+
+  const handleSplashChoose = (type) => {
+    setShowSplash(false);
+    if (type !== null) {
+      setModalInitialType(type);
+      setShowModal(true);
+    }
+  };
 
   useEffect(() => {
     const q = query(collection(db, 'rides'), orderBy('createdAt', 'desc'));
@@ -447,12 +496,16 @@ export default function App() {
   return (
     <div className="app" dir="rtl" lang="he">
 
+      {/* Splash Screen */}
+      {showSplash && <SplashScreen onChoose={handleSplashChoose} />}
+
       {/* Header */}
       <header className="header">
-        <div className="header-inner">
-          <p className="header-sub">קיסריה • 13 במאי 2025</p>
-          <h1 className="header-title">ג׳ימבו ג׳יי ולהקת ספא</h1>
-          <div className="header-badge">🚗 לוח טרמפים</div>
+        <div className="header-img-wrap">
+          <img src={concertImg} alt="ג׳ימבו ג׳יי קיסריה 13.5" className="header-concert-img" />
+          <div className="header-img-overlay">
+            <div className="header-badge">🚗 לוח טרמפים</div>
+          </div>
         </div>
       </header>
 
@@ -486,7 +539,7 @@ export default function App() {
       <main className="board">
         {filtered.length === 0 ? (
           <div className="empty">
-            <div className="empty-icon">🎵</div>
+            <img src={vanSvg} alt="ואן טרמפ" className="empty-van" />
             <p className="empty-title">אין פוסטים עדיין</p>
             <p className="empty-sub">היה/י הראשון/ה לפרסם!</p>
           </div>
@@ -500,7 +553,7 @@ export default function App() {
       </main>
 
       {/* FAB */}
-      <button className="fab" onClick={() => setShowModal(true)} aria-label="פרסם טרמפ">
+      <button className="fab" onClick={() => { setModalInitialType('offering'); setShowModal(true); }} aria-label="פרסם טרמפ">
         <span className="fab-plus">+</span> פרסם טרמפ
       </button>
 
@@ -509,6 +562,7 @@ export default function App() {
           onClose={() => setShowModal(false)}
           onSubmit={handleSubmit}
           loading={loading}
+          initialType={modalInitialType}
         />
       )}
     </div>
