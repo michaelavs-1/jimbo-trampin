@@ -1,73 +1,209 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" fill="none">
-  <!-- Road -->
-  <rect x="0" y="130" width="320" height="30" fill="#1a0030" rx="4"/>
-  <rect x="20" y="143" width="40" height="5" fill="#e91e8c" rx="2" opacity="0.6"/>
-  <rect x="80" y="143" width="40" height="5" fill="#e91e8c" rx="2" opacity="0.6"/>
-  <rect x="140" y="143" width="40" height="5" fill="#e91e8c" rx="2" opacity="0.6"/>
-  <rect x="200" y="143" width="40" height="5" fill="#e91e8c" rx="2" opacity="0.6"/>
-  <rect x="260" y="143" width="40" height="5" fill="#e91e8c" rx="2" opacity="0.6"/>
-
-  <!-- Van body -->
-  <rect x="40" y="70" width="200" height="65" rx="12" fill="#2d0050"/>
-  <rect x="40" y="70" width="200" height="65" rx="12" stroke="#e91e8c" stroke-width="2.5"/>
-
-  <!-- Van roof / cab -->
-  <rect x="55" y="48" width="185" height="32" rx="10" fill="#2d0050" stroke="#e91e8c" stroke-width="2.5"/>
-
-  <!-- Front windshield -->
-  <rect x="190" y="54" width="40" height="20" rx="5" fill="#9c27b0" opacity="0.7"/>
-
-  <!-- Side windows -->
-  <rect x="68" y="54" width="32" height="20" rx="4" fill="#9c27b0" opacity="0.7"/>
-  <rect x="110" y="54" width="32" height="20" rx="4" fill="#9c27b0" opacity="0.7"/>
-  <rect x="152" y="54" width="32" height="20" rx="4" fill="#9c27b0" opacity="0.7"/>
-
-  <!-- Side door line -->
-  <line x1="160" y1="72" x2="160" y2="132" stroke="#e91e8c" stroke-width="1.5" opacity="0.5"/>
-
-  <!-- Door handle -->
-  <rect x="148" y="98" width="10" height="4" rx="2" fill="#e91e8c"/>
-
-  <!-- Headlight -->
-  <rect x="228" y="85" width="14" height="10" rx="3" fill="#fff9c4"/>
-  <rect x="228" y="85" width="14" height="10" rx="3" fill="url(#headlightGlow)" opacity="0.5"/>
-
-  <!-- Tail light -->
-  <rect x="40" y="85" width="10" height="8" rx="2" fill="#ff1744" opacity="0.9"/>
-
-  <!-- Wheels -->
-  <circle cx="90" cy="133" r="18" fill="#130020" stroke="#e91e8c" stroke-width="3"/>
-  <circle cx="90" cy="133" r="9" fill="#2d0050" stroke="#9c27b0" stroke-width="2"/>
-  <circle cx="90" cy="133" r="3" fill="#e91e8c"/>
-
-  <circle cx="210" cy="133" r="18" fill="#130020" stroke="#e91e8c" stroke-width="3"/>
-  <circle cx="210" cy="133" r="9" fill="#2d0050" stroke="#9c27b0" stroke-width="2"/>
-  <circle cx="210" cy="133" r="3" fill="#e91e8c"/>
-
-  <!-- Stars / music notes decoration -->
-  <!-- Music note 1 -->
-  <text x="262" y="58" font-size="18" fill="#e91e8c" opacity="0.9">♪</text>
-  <!-- Music note 2 -->
-  <text x="282" y="42" font-size="14" fill="#9c27b0" opacity="0.8">♫</text>
-  <!-- Music note 3 -->
-  <text x="298" y="60" font-size="11" fill="#e91e8c" opacity="0.6">♩</text>
-
-  <!-- Star sparkles -->
-  <text x="14" y="60" font-size="14" fill="#9c27b0" opacity="0.7">✨</text>
-  <text x="22" y="38" font-size="10" fill="#e91e8c" opacity="0.5">⭐</text>
-
-  <!-- Van label -->
-  <text x="80" y="110" font-size="13" font-family="Arial, sans-serif" font-weight="bold" fill="#e91e8c" letter-spacing="1">טרמפ 13.5 🎵</text>
-
-  <!-- Speed lines -->
-  <line x1="10" y1="90" x2="38" y2="90" stroke="#e91e8c" stroke-width="2" opacity="0.4"/>
-  <line x1="6" y1="100" x2="38" y2="100" stroke="#9c27b0" stroke-width="1.5" opacity="0.3"/>
-  <line x1="12" y1="110" x2="38" y2="110" stroke="#e91e8c" stroke-width="1" opacity="0.25"/>
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" fill="none">
   <defs>
-    <radialGradient id="headlightGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff"/>
-      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    <!-- Van body gradient -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="55%" stop-color="#5b21b6"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <!-- Body highlight -->
+    <linearGradient id="bodyHighlight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Windshield gradient -->
+    <linearGradient id="windshieldGrad" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.7"/>
+    </linearGradient>
+    <!-- Side window gradient -->
+    <linearGradient id="windowGrad" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.6"/>
+    </linearGradient>
+    <!-- Wheel gradient -->
+    <radialGradient id="wheelGrad" cx="45%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#4b5563"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </radialGradient>
+    <!-- Rim gradient -->
+    <radialGradient id="rimGrad" cx="40%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#e5e7eb"/>
+      <stop offset="100%" stop-color="#9ca3af"/>
+    </radialGradient>
+    <!-- Headlight glow -->
+    <radialGradient id="headGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fef3c7" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Road gradient -->
+    <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1033"/>
+      <stop offset="100%" stop-color="#0d0820"/>
+    </linearGradient>
+    <!-- Shadow -->
+    <radialGradient id="shadowGrad" cx="50%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
   </defs>
+
+  <!-- Road -->
+  <rect x="0" y="162" width="400" height="38" rx="0" fill="url(#roadGrad)"/>
+  <!-- Road center line -->
+  <rect x="0" y="178" width="48" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+  <rect x="68" y="178" width="48" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+  <rect x="136" y="178" width="48" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+  <rect x="204" y="178" width="48" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+  <rect x="272" y="178" width="48" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+  <rect x="340" y="178" width="60" height="5" rx="2.5" fill="#e91e8c" opacity="0.5"/>
+
+  <!-- Van shadow on road -->
+  <ellipse cx="215" cy="165" rx="130" ry="8" fill="url(#shadowGrad)"/>
+
+  <!-- === VAN BODY === -->
+  <!-- Main body -->
+  <path d="M 60 155 L 60 88 Q 62 72 80 68 L 185 58 Q 220 55 240 62 L 310 75 Q 340 80 348 95 L 360 130 Q 366 142 362 155 Z"
+        fill="url(#bodyGrad)" stroke="#9333ea" stroke-width="2"/>
+
+  <!-- Body highlight (top gloss) -->
+  <path d="M 80 70 L 185 60 Q 218 57 238 63 L 300 76 Q 326 81 340 94 L 345 105 Q 290 88 240 83 L 150 78 Q 110 76 80 83 Z"
+        fill="url(#bodyHighlight)"/>
+
+  <!-- Undercarriage / lower body shadow -->
+  <path d="M 62 145 L 360 145 L 362 155 L 60 155 Z"
+        fill="#3b0764" opacity="0.6"/>
+
+  <!-- Front bumper -->
+  <rect x="350" y="138" width="20" height="14" rx="5" fill="#6d28d9" stroke="#9333ea" stroke-width="1.5"/>
+  <!-- Bumper detail line -->
+  <line x1="352" y1="144" x2="368" y2="144" stroke="#a78bfa" stroke-width="1.2" opacity="0.6"/>
+
+  <!-- Rear bumper -->
+  <rect x="42" y="138" width="20" height="14" rx="5" fill="#6d28d9" stroke="#9333ea" stroke-width="1.5"/>
+
+  <!-- === WINDSHIELD (front, right side) === -->
+  <path d="M 308 78 L 348 96 L 349 132 L 308 132 Z"
+        fill="url(#windshieldGrad)" stroke="#a78bfa" stroke-width="1.5" opacity="0.9"/>
+  <!-- Windshield glare -->
+  <path d="M 314 82 L 344 97 L 344 108 L 314 96 Z"
+        fill="white" opacity="0.12"/>
+
+  <!-- === SIDE WINDOWS === -->
+  <!-- Window frame background -->
+  <rect x="76" y="70" width="218" height="56" rx="8" fill="#3b0764" opacity="0.4"/>
+
+  <!-- Window 1 (rear) -->
+  <rect x="82" y="74" width="56" height="48" rx="6" fill="url(#windowGrad)" stroke="#a78bfa" stroke-width="1.2"/>
+  <!-- Window 1 glare -->
+  <rect x="84" y="76" width="28" height="14" rx="3" fill="white" opacity="0.12"/>
+
+  <!-- Window 2 (middle) -->
+  <rect x="148" y="72" width="66" height="50" rx="6" fill="url(#windowGrad)" stroke="#a78bfa" stroke-width="1.2"/>
+  <!-- Window 2 glare -->
+  <rect x="150" y="74" width="33" height="14" rx="3" fill="white" opacity="0.12"/>
+
+  <!-- Window 3 (front cab) -->
+  <rect x="224" y="68" width="74" height="54" rx="6" fill="url(#windowGrad)" stroke="#a78bfa" stroke-width="1.2"/>
+  <!-- Window 3 glare -->
+  <rect x="226" y="70" width="37" height="14" rx="3" fill="white" opacity="0.12"/>
+
+  <!-- === DRIVER SILHOUETTE === -->
+  <!-- Head -->
+  <circle cx="280" cy="82" r="10" fill="#1e1033" opacity="0.8"/>
+  <!-- Body/shoulders -->
+  <path d="M 270 93 Q 270 88 280 88 Q 290 88 290 93 L 292 112 L 268 112 Z"
+        fill="#1e1033" opacity="0.7"/>
+  <!-- Hair hint -->
+  <path d="M 272 76 Q 275 70 280 70 Q 285 70 288 74 Q 286 72 280 72 Q 275 73 272 76"
+        fill="#7c3aed" opacity="0.6"/>
+
+  <!-- === DOOR LINES === -->
+  <line x1="145" y1="68" x2="145" y2="153" stroke="#9333ea" stroke-width="1.5" opacity="0.6"/>
+  <line x1="220" y1="65" x2="220" y2="153" stroke="#9333ea" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Door handles -->
+  <rect x="196" y="118" width="16" height="5" rx="2.5" fill="#a78bfa" stroke="#c4b5fd" stroke-width="0.8"/>
+  <rect x="120" y="120" width="16" height="5" rx="2.5" fill="#a78bfa" stroke="#c4b5fd" stroke-width="0.8"/>
+
+  <!-- === HEADLIGHTS === -->
+  <!-- Headlight glow effect -->
+  <ellipse cx="370" cy="122" rx="28" ry="16" fill="url(#headGlow)" opacity="0.4"/>
+  <!-- Headlight housing -->
+  <rect x="355" y="112" width="20" height="14" rx="5" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+  <!-- Headlight inner -->
+  <rect x="358" y="115" width="13" height="8" rx="3" fill="#fde68a"/>
+  <!-- Headlight shine -->
+  <rect x="360" y="116" width="5" height="3" rx="1" fill="white" opacity="0.7"/>
+
+  <!-- Daytime running light -->
+  <rect x="355" y="128" width="20" height="5" rx="2" fill="#fcd34d" opacity="0.8"/>
+
+  <!-- === TAIL LIGHTS === -->
+  <rect x="44" y="110" width="16" height="20" rx="5" fill="#dc2626" stroke="#ef4444" stroke-width="1.2"/>
+  <rect x="46" y="112" width="6" height="8" rx="2" fill="#fca5a5" opacity="0.7"/>
+  <!-- Reverse light -->
+  <rect x="44" y="132" width="16" height="8" rx="3" fill="#ffffff" opacity="0.6"/>
+
+  <!-- === ROOF RACK (subtle) === -->
+  <rect x="85" y="62" width="220" height="5" rx="2.5" fill="#6d28d9" stroke="#9333ea" stroke-width="1"/>
+  <line x1="110" y1="62" x2="110" y2="67" stroke="#9333ea" stroke-width="1.5"/>
+  <line x1="170" y1="60" x2="170" y2="67" stroke="#9333ea" stroke-width="1.5"/>
+  <line x1="230" y1="59" x2="230" y2="67" stroke="#9333ea" stroke-width="1.5"/>
+  <line x1="290" y1="61" x2="290" y2="67" stroke="#9333ea" stroke-width="1.5"/>
+
+  <!-- === WHEELS === -->
+  <!-- Rear wheel -->
+  <circle cx="108" cy="158" r="30" fill="url(#wheelGrad)" stroke="#374151" stroke-width="2"/>
+  <!-- Tire tread -->
+  <circle cx="108" cy="158" r="30" fill="none" stroke="#4b5563" stroke-width="4" stroke-dasharray="8 4"/>
+  <!-- Rim -->
+  <circle cx="108" cy="158" r="20" fill="url(#rimGrad)"/>
+  <circle cx="108" cy="158" r="18" fill="#1f2937" stroke="#6b7280" stroke-width="1"/>
+  <!-- Rim spokes -->
+  <line x1="108" y1="141" x2="108" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="108" y1="161" x2="108" y2="175" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="91" y1="158" x2="105" y2="158" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="111" y1="158" x2="125" y2="158" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="96" y1="146" x2="105" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="111" y1="161" x2="120" y2="170" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="120" y1="146" x2="111" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="105" y1="161" x2="96" y2="170" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Hub cap -->
+  <circle cx="108" cy="158" r="6" fill="#d1d5db" stroke="#9ca3af" stroke-width="1"/>
+  <circle cx="108" cy="158" r="2.5" fill="#6b7280"/>
+
+  <!-- Front wheel -->
+  <circle cx="298" cy="158" r="30" fill="url(#wheelGrad)" stroke="#374151" stroke-width="2"/>
+  <circle cx="298" cy="158" r="30" fill="none" stroke="#4b5563" stroke-width="4" stroke-dasharray="8 4"/>
+  <circle cx="298" cy="158" r="20" fill="url(#rimGrad)"/>
+  <circle cx="298" cy="158" r="18" fill="#1f2937" stroke="#6b7280" stroke-width="1"/>
+  <!-- Rim spokes -->
+  <line x1="298" y1="141" x2="298" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="298" y1="161" x2="298" y2="175" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="281" y1="158" x2="295" y2="158" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="301" y1="158" x2="315" y2="158" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="286" y1="146" x2="295" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="301" y1="161" x2="310" y2="170" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="310" y1="146" x2="301" y2="155" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="295" y1="161" x2="286" y2="170" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="298" cy="158" r="6" fill="#d1d5db" stroke="#9ca3af" stroke-width="1"/>
+  <circle cx="298" cy="158" r="2.5" fill="#6b7280"/>
+
+  <!-- === SPEED LINES (motion effect) === -->
+  <line x1="8" y1="95" x2="52" y2="95" stroke="#e91e8c" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+  <line x1="2" y1="108" x2="52" y2="108" stroke="#9333ea" stroke-width="1.8" stroke-linecap="round" opacity="0.4"/>
+  <line x1="14" y1="121" x2="52" y2="121" stroke="#e91e8c" stroke-width="1.2" stroke-linecap="round" opacity="0.3"/>
+  <line x1="6" y1="133" x2="52" y2="133" stroke="#9333ea" stroke-width="1" stroke-linecap="round" opacity="0.25"/>
+
+  <!-- === FLOATING MUSIC NOTES === -->
+  <text x="374" y="55" font-size="22" fill="#e91e8c" opacity="0.85" transform="rotate(-8 374 55)">♪</text>
+  <text x="358" y="36" font-size="16" fill="#a78bfa" opacity="0.7" transform="rotate(5 358 36)">♫</text>
+  <text x="388" y="78" font-size="13" fill="#e91e8c" opacity="0.55" transform="rotate(-5 388 78)">♩</text>
+  <text x="345" y="22" font-size="11" fill="#c4b5fd" opacity="0.5" transform="rotate(10 345 22)">♬</text>
+
+  <!-- Stars -->
+  <circle cx="30" cy="42" r="2" fill="#e91e8c" opacity="0.6"/>
+  <circle cx="22" cy="58" r="1.5" fill="#a78bfa" opacity="0.5"/>
+  <circle cx="38" cy="30" r="1.8" fill="#e91e8c" opacity="0.4"/>
 </svg>
