@@ -210,6 +210,83 @@ const DEPARTURE_TIMES = [
 
 const SORTED_CITIES = [...CITIES].sort((a, b) => a.name.localeCompare(b.name, 'he'));
 
+// ─── City Picker (searchable) ──────────────────────────────────────────────
+
+function CityPicker({ value, onChange, hasError }) {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef();
+
+  const filtered = query.trim()
+    ? SORTED_CITIES.filter((c) => c.name.includes(query.trim()))
+    : SORTED_CITIES;
+
+  const select = (name) => {
+    onChange(name);
+    setQuery('');
+    setOpen(false);
+  };
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+        setQuery('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div className="city-picker" ref={containerRef}>
+      <div
+        className={`city-input-wrap ${hasError ? 'field-error' : ''}`}
+        onClick={() => { setOpen(true); }}
+      >
+        <span className="city-search-icon">🔍</span>
+        <input
+          className="city-input"
+          type="text"
+          placeholder={value || 'חפש/י עיר...'}
+          value={open ? query : (value || '')}
+          onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          autoComplete="off"
+          inputMode="search"
+        />
+        {value && !open && (
+          <button
+            type="button"
+            className="city-clear"
+            onClick={(e) => { e.stopPropagation(); onChange(''); setQuery(''); }}
+          >×</button>
+        )}
+      </div>
+      {open && (
+        <div className="city-dropdown">
+          {filtered.length === 0 ? (
+            <div className="city-none">לא נמצאה עיר</div>
+          ) : (
+            filtered.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                className={`city-option ${value === c.name ? 'city-option-selected' : ''}`}
+                onClick={() => select(c.name)}
+              >
+                {value === c.name && <span className="city-check">✓</span>}
+                {c.name}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
   const [type, setType] = useState(initialType);
   const [from, setFrom] = useState('');
@@ -266,16 +343,11 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering' }) {
           {/* City */}
           <div className="field">
             <label className="field-label">📍 מאיפה יוצאים?</label>
-            <select
-              className={`field-input ${errors.from ? 'field-error' : ''}`}
+            <CityPicker
               value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            >
-              <option value="">-- בחר/י עיר --</option>
-              {SORTED_CITIES.map((c) => (
-                <option key={c.name} value={c.name}>{c.name}</option>
-              ))}
-            </select>
+              onChange={setFrom}
+              hasError={!!errors.from}
+            />
             {errors.from && <span className="err">{errors.from}</span>}
           </div>
 

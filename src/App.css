@@ -655,6 +655,103 @@ input, select { font-family: inherit; }
 
 .err { font-size: 12px; color: #f87171; }
 
+/* ── City Picker ──────────────────────────────────────────────────────────── */
+
+.city-picker {
+  position: relative;
+  width: 100%;
+}
+
+.city-input-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #0d0020;
+  border: 1.5px solid rgba(233,30,140,0.25);
+  border-radius: var(--radius);
+  padding: 0 12px;
+  gap: 8px;
+  cursor: text;
+  transition: border-color 0.15s;
+}
+.city-input-wrap:focus-within { border-color: var(--accent); }
+.city-input-wrap.field-error { border-color: #ef4444; }
+
+.city-search-icon { font-size: 15px; flex-shrink: 0; }
+
+.city-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  padding: 13px 0;
+  direction: rtl;
+  min-width: 0;
+}
+.city-input::placeholder { color: var(--text-muted); }
+
+.city-clear {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.city-clear:hover { color: var(--text); }
+
+.city-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  background: #1a0030;
+  border: 1.5px solid rgba(233,30,140,0.3);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  z-index: 50;
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.city-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 16px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  text-align: right;
+  direction: rtl;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  min-height: 48px;
+}
+.city-option:last-child { border-bottom: none; }
+.city-option:hover, .city-option:focus { background: rgba(233,30,140,0.12); color: #fff; }
+.city-option-selected { background: rgba(233,30,140,0.18) !important; color: var(--accent) !important; font-weight: 700; }
+
+.city-check { color: var(--accent); font-size: 14px; flex-shrink: 0; }
+
+.city-none {
+  padding: 14px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
 /* ── Pill Group ───────────────────────────────────────────────────────────── */
 
 .pill-group {
