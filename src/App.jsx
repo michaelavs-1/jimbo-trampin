@@ -741,7 +741,7 @@ function PinSuccessModal({ pin, onClose }) {
 
         <p className="pin-success-sub">זה הקוד האישי שלך:</p>
 
-        <div className="pin-digits-row">
+        <div className="pin-digits-row" dir="ltr">
           {digits.map((d, i) => (
             <div key={i} className="pin-digit">{d}</div>
           ))}
@@ -888,6 +888,7 @@ function MyAdsModal({ posts, onClose, onDelete, onUpdate, updateLoading }) {
               className={`pin-input ${pinError ? 'field-error' : ''}`}
               type="text"
               inputMode="numeric"
+              dir="ltr"
               placeholder="_ _ _ _"
               maxLength={4}
               value={pinInput}
