@@ -1138,3 +1138,28 @@ input, select { font-family: inherit; }
   text-align: center;
   margin: 0;
 }
+
+/* ── Screenshot button in PIN modal ──────────────────────────────────────── */
+
+.pin-screenshot-btn {
+  width: 100%;
+  padding: 13px 16px;
+  background: linear-gradient(135deg, rgba(233,30,140,0.15), rgba(147,51,234,0.15));
+  border: 1.5px dashed rgba(233, 30, 140, 0.6);
+  border-radius: 12px;
+  color: #f0abfc;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  margin-bottom: 4px;
+}
+.pin-screenshot-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(233,30,140,0.25), rgba(147,51,234,0.25));
+  border-color: var(--accent);
+}
+.pin-screenshot-btn:active:not(:disabled) { transform: scale(0.98); }
+.pin-screenshot-btn:disabled { opacity: 0.6; cursor: default; }
+
+.pin-done-btn { margin-top: 0; }

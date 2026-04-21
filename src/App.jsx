@@ -7,6 +7,7 @@ import { db } from './firebase';
 import { CITIES } from './cities';
 import { findMatches, MATCH_LABELS } from './matching';
 import concertImg from './assets/jimbo-concert.png';
+import html2canvas from 'html2canvas';
 import './App.css';
 
 // ─── 4-digit PIN identity ─────────────────────────────────────────────────────
@@ -690,7 +691,9 @@ function PostModal({ onClose, onSubmit, loading, initialType = 'offering', editP
 
 function PinSuccessModal({ pin, onClose }) {
   const [copied, setCopied] = useState(false);
+  const [capturing, setCapturing] = useState(false);
   const digits = pin.split('');
+  const cardRef = useRef();
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(pin).then(() => {
@@ -699,9 +702,38 @@ function PinSuccessModal({ pin, onClose }) {
     });
   };
 
+  const handleScreenshot = async () => {
+    if (!cardRef.current || capturing) return;
+    setCapturing(true);
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        backgroundColor: '#130020',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], `jimbo-pin-${pin}.png`, { type: 'image/png' });
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'הקוד שלי — לוח טרמפים ג׳ימבו' });
+        } else {
+          // fallback: download
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = file.name; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+      }, 'image/png');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setCapturing(false);
+    }
+  };
+
   return (
     <div className="modal-overlay pin-overlay">
-      <div className="modal pin-success-modal">
+      <div className="modal pin-success-modal" ref={cardRef}>
         <div className="pin-success-top">
           <span className="pin-success-icon">✅</span>
           <h2 className="pin-success-title">המודעה פורסמה!</h2>
@@ -727,7 +759,15 @@ function PinSuccessModal({ pin, onClose }) {
           </p>
         </div>
 
-        <button className="submit-btn" onClick={onClose}>
+        <button
+          className="pin-screenshot-btn"
+          onClick={handleScreenshot}
+          disabled={capturing}
+        >
+          {capturing ? '⏳ מצלם...' : '📷 הכי טוב ללחוץ פה לצלם מסך :)'}
+        </button>
+
+        <button className="submit-btn pin-done-btn" onClick={onClose}>
           שמרתי את הקוד — המשך ✓
         </button>
       </div>
