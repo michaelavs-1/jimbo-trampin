@@ -528,14 +528,6 @@ input, select { font-family: inherit; }
   );
 }
 
-.empty-van {
-  width: 100%;
-  max-width: 260px;
-  margin-bottom: 8px;
-  animation: busWobble 3s ease-in-out infinite;
-  opacity: 0.85;
-}
-
 /* ── Empty State ──────────────────────────────────────────────────────────── */
 
 .empty {

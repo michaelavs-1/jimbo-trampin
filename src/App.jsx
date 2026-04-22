@@ -1165,7 +1165,7 @@ export default function App() {
       <main className="board">
         {filtered.length === 0 ? (
           <div className="empty">
-            <BusSvg className="empty-van" />
+            <p className="empty-icon">🚗</p>
             <p className="empty-title">אין פוסטים עדיין</p>
             <p className="empty-sub">היה/י הראשון/ה לפרסם!</p>
           </div>
