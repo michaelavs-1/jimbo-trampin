@@ -1170,20 +1170,11 @@ export default function App() {
             <p className="empty-sub">היה/י הראשון/ה לפרסם!</p>
           </div>
         ) : (
-          <>
-            <div className="cards-grid">
-              {filtered.map((p) => (
-                <RideCard key={p.id} post={p} allPosts={posts} />
-              ))}
-            </div>
-            {/* Bus scene at bottom of board */}
-            <div className="board-bus-scene" aria-hidden="true">
-              <div className="board-van-track">
-                <BusSvg className="board-van" />
-              </div>
-              <div className="board-road"><div className="board-road-dashes"/></div>
-            </div>
-          </>
+          <div className="cards-grid">
+            {filtered.map((p) => (
+              <RideCard key={p.id} post={p} allPosts={posts} />
+            ))}
+          </div>
         )}
       </main>
 
