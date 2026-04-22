@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB2z5UZ-sVBcAqbmMTwPGefE516-nv6Y2I",
-  authDomain: "jimbo-trampin.firebaseapp.com",
-  projectId: "jimbo-trampin",
-  storageBucket: "jimbo-trampin.firebasestorage.app",
-  messagingSenderId: "901778295914",
-  appId: "1:901778295914:web:e4422ada6dea12e0ce0e13",
-  measurementId: "G-YXCTYT4Z4Z",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
