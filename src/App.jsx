@@ -966,6 +966,7 @@ function MyAdsModal({ posts, onClose, onDelete, onUpdate, updateLoading }) {
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [modalInitialType, setModalInitialType] = useState('offering');
   const [showTypePicker, setShowTypePicker] = useState(false);
@@ -1071,9 +1072,16 @@ export default function App() {
     }
   }, []);
 
-  const filtered = posts.filter((p) =>
-    filter === 'all' ? true : p.type === filter,
-  );
+  const searchTrim = search.trim().toLowerCase();
+  const filtered = posts.filter((p) => {
+    const typeMatch = filter === 'all' ? true : p.type === filter;
+    const searchMatch = !searchTrim
+      ? true
+      : (p.from  || '').toLowerCase().includes(searchTrim) ||
+        (p.name  || '').toLowerCase().includes(searchTrim) ||
+        (p.notes || '').toLowerCase().includes(searchTrim);
+    return typeMatch && searchMatch;
+  });
   const offeringCount = posts.filter((p) => p.type === 'offering').length;
   const seekingCount  = posts.filter((p) => p.type === 'seeking').length;
 
@@ -1103,6 +1111,13 @@ export default function App() {
         <div className="offline-bar">⚠️ בעיית חיבור — מנסה להתחבר...</div>
       )}
 
+      {/* Sticky Publish Bar */}
+      <div className="publish-bar">
+        <button className="publish-bar-btn" onClick={() => setShowTypePicker(true)}>
+          <span className="publish-bar-plus">+</span> פרסם מודעה
+        </button>
+      </div>
+
       {/* Filter tabs */}
       <div className="filter-bar">
         <button
@@ -1119,6 +1134,22 @@ export default function App() {
         >✋ מחפשים <span className="tab-count">{seekingCount}</span></button>
       </div>
 
+      {/* Search bar */}
+      <div className="search-bar">
+        <span className="search-icon">🔍</span>
+        <input
+          className="search-input"
+          type="search"
+          placeholder="חיפוש לפי עיר, שם..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          dir="rtl"
+        />
+        {search && (
+          <button className="search-clear" onClick={() => setSearch('')} aria-label="נקה חיפוש">×</button>
+        )}
+      </div>
+
       {/* Board */}
       <main className="board">
         {filtered.length === 0 ? (
@@ -1128,18 +1159,22 @@ export default function App() {
             <p className="empty-sub">היה/י הראשון/ה לפרסם!</p>
           </div>
         ) : (
-          <div className="cards-grid">
-            {filtered.map((p) => (
-              <RideCard key={p.id} post={p} allPosts={posts} />
-            ))}
-          </div>
+          <>
+            <div className="cards-grid">
+              {filtered.map((p) => (
+                <RideCard key={p.id} post={p} allPosts={posts} />
+              ))}
+            </div>
+            {/* Bus scene at bottom of board */}
+            <div className="board-bus-scene" aria-hidden="true">
+              <div className="board-van-track">
+                <BusSvg className="board-van" />
+              </div>
+              <div className="board-road"><div className="board-road-dashes"/></div>
+            </div>
+          </>
         )}
       </main>
-
-      {/* FAB */}
-      <button className="fab" onClick={() => setShowTypePicker(true)} aria-label="פרסם מודעה">
-        <span className="fab-plus">+</span> פרסם מודעה
-      </button>
 
       {showModal && (
         <PostModal
