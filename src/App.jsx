@@ -1090,13 +1090,24 @@ export default function App() {
 
       {/* Header */}
       <header className="header">
-        <div className="header-img-wrap">
-          <img src={concertImg} alt="ג׳ימבו ג׳יי קיסריה 13.5" className="header-concert-img" />
-          <div className="header-img-overlay">
-            <div className="header-badge">🚗 לוח טרמפים</div>
+        <div className="header-bus-wrap">
+          {/* Title + My Ads button row */}
+          <div className="header-bus-overlay">
+            <div className="header-title-block">
+              <div className="header-badge">🚗 לוח טרמפים</div>
+              <div className="header-event-text">ג׳ימבו ג׳יי • קיסריה 13.5.26 🎵</div>
+            </div>
             <button className="my-ads-btn" onClick={() => setShowMyAds(true)}>
               👤 <span className="my-ads-btn-text">המודעות שלי</span>
             </button>
+          </div>
+          {/* Animated bus */}
+          <div className="header-bus-track">
+            <BusSvg className="header-bus" />
+          </div>
+          {/* Static road */}
+          <div className="header-road">
+            <div className="header-road-dashes" />
           </div>
         </div>
       </header>

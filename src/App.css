@@ -166,32 +166,85 @@ input, select { font-family: inherit; }
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 2px solid var(--accent);
 }
 
-.header-img-wrap {
+.header-bus-wrap {
   position: relative;
   width: 100%;
   height: 130px;
+  background: linear-gradient(180deg, #0b0015 0%, #130020 60%, #1a0030 100%);
   overflow: hidden;
+  border-bottom: 2px solid var(--accent);
 }
 
-.header-concert-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-}
-
-.header-img-overlay {
+/* Title + My Ads button, pinned to top of the wrap */
+.header-bus-overlay {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(11,0,21,0.25) 0%, rgba(11,0,21,0.65) 100%);
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 10px 14px;
+  z-index: 2;
+}
+
+.header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.header-event-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding-right: 2px;
+}
+
+/* Bus track: sits just above the road strip at the bottom */
+.header-bus-track {
+  position: absolute;
+  bottom: 14px;   /* height of road strip */
+  left: 0;
+  right: 0;
+  line-height: 0;
+  z-index: 1;
+}
+
+.header-bus {
+  width: 48%;
+  max-width: 260px;
+  display: block;
+  animation: busScroll 5s linear infinite;
+}
+
+/* Road strip pinned to very bottom of header */
+.header-road {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(to bottom, #1e1033, #09061a);
+  z-index: 1;
+}
+
+.header-road-dashes {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(233, 30, 140, 0.55) 0px,
+    rgba(233, 30, 140, 0.55) 50px,
+    transparent 50px,
+    transparent 75px
+  );
 }
 
 /* My Ads icon button in header */
